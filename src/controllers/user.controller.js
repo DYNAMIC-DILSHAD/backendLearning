@@ -1,12 +1,13 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
-import { ApiRespone } from "../utils/ApiRespone.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const registerUser = asyncHandler(async (req, res) => {
   const { fullName, email, password, userName } = req.body;
   console.log(email);
+
   //get user details from frontend
   //validation - not empty
   //check if user already exists : username and email
@@ -24,7 +25,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const existedUser = User.findOne({
-    // this user we imported from user.modal.js and we can use directly because it is made by directly mongoose.
+    // this User we imported from user.modal.js and we can use directly because it is made by directly mongoose and talk with databse.
     $or: [{ userName }, { email }],
   });
 
@@ -58,11 +59,9 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Something went wrong white registering the user");
   }
 
-return res.status(200).json(
-    new ApiRespone(200,"user registered successfully")
-)
-
+  return res
+    .status(200)
+    .json(new ApiResponse(200, "user registered successfully"));
 });
-
 
 export { registerUser };
