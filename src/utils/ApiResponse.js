@@ -6,3 +6,5 @@ class ApiResponse {
         this.success = statusCode < 400  // because every sucees is less than 400 status code
     }
 }
+
+export {ApiResponse}
