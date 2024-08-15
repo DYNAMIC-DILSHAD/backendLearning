@@ -27,8 +27,9 @@ const registerUser = asyncHandler(async (req, res) => {
     // this User we imported from user.modal.js and we can use directly because it is made by directly mongoose and talk with databse.
     $or: [{ userName }, { email }],
   });
-
+  // console.log("user already registerd",existedUser)
   if (existedUser) {
+    
     throw new ApiError(400, "User with email or username already exist");
   }
 
@@ -42,7 +43,9 @@ const registerUser = asyncHandler(async (req, res) => {
     req.files &&
     Array.isArray(req.files.coverImage) &&
     req.files.coverImage.length > 0
+  
   ) {
+    console.log( Array.isArray(req.files.coverImage))
     coverImageLocalPath = req.files.coverImage[0].path;
   }
   const avatar = await uploadOnCloudinary(avatarLocalPath);
