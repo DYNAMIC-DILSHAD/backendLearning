@@ -1,5 +1,10 @@
+import dotenv from 'dotenv'; // here dotenv
+dotenv.config()
 import mongoose, { Schema } from "mongoose";
 import bcrypt from "bcrypt";
+import { ApiError } from "../utils/ApiError.js";
+import jwt from 'jsonwebtoken'
+
 
 const userSchema = new Schema(
   {
@@ -56,31 +61,42 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {
-  return await bcrypt.compare(this.password, password);
+  // console.log(password)
+  return await bcrypt.compare(password, this.password);
 };
-userSchema.methods.generateAccessToken = function () {
-  return Jwt.sign(
-    {
-      _id: this._id,
-      userName: this.userName,
-      fullName: this.fullName,
-      email: this.email,
-    },
+userSchema.methods.generateAccessToken = async function () {
+ 
+  try {
+    const token=  jwt.sign(
+      {
+        _id: this._id,
+        userName: this.userName,
+        fullName: this.fullName,
+        email: this.email
+      },
 
-    process.env.ACCESS_REFRESH_TOKEN_SECRET,
-    {
-      expiresIn: ACCESS_TOKEN_EXPIREY,
-    }
-  );
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: process.env.ACCESS_TOKEN_EXPIREY
+      }
+    );
+    console.log("generateAccessToken method called");
+    return token
+   
+  } catch (error) {
+    throw new ApiError(400, "something wrong while saving access token");
+  }
+
+ 
 };
-userSchema.methods.generateRefreshToken = function () {
-  return Jwt.sign(
+userSchema.methods.generateRefreshToken = async function () {
+   return jwt.sign(
     {
-      _id: this._id,
+      _id: this._id
     },
     process.env.REFRESH_TOKEN_SECRET,
     {
-      expiresIn: REFRESH_TOKEN_EXPIREY,
+      expiresIn: process.env.REFRESH_TOKEN_EXPIREY,
     }
   );
 };
