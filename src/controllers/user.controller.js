@@ -225,9 +225,9 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       .cookie("accessToken", accessToken, options)
       .cookie("refreshToken", newRefreshToken, options)
       .json(
-        200,
+        new ApiResponse(200,
         { accessToken, refreshToken: newRefreshToken },
-        "access token and refresh token generated successfully"
+        "access token and refresh token generated successfully")
       );
   } catch (error) {
     throw new ApiError(401, "Invalid refresh token");
@@ -269,7 +269,7 @@ const updateAccountDetails = asyncHandler(async(req,res)=>{
   ).select("password")
 
   return res.status(200)
-  .json(200,user,"Account details updated successfully")
+  .json(new ApiResponse(200,user,"Account details updated successfully"))
 })
 
 const updateUserAvatar = asyncHandler(async(req,res)=> {
@@ -291,7 +291,7 @@ const updateUserAvatar = asyncHandler(async(req,res)=> {
     }
   ).select("-password")
   return res.status(200)
-  .json(200,user,"Avatar file is updated successfully")
+  .json(new ApiResponse(200,user,"Avatar file is updated successfully"))
 })
 
 const updateCoverImage = asyncHandler(async(req,res)=>{
@@ -314,7 +314,7 @@ const updateCoverImage = asyncHandler(async(req,res)=>{
     }
   ).select("password")
   return res.status(200)
-  .json(200,user,"cover image updated successfully")
+  .json(new ApiResponse(200,user,"cover image updated successfully"))
 })
 
 
